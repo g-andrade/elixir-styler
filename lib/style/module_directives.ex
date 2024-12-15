@@ -285,7 +285,9 @@ defmodule Styler.Style.ModuleDirectives do
     excluded = dealiases |> Map.keys() |> Enum.into(Styler.Config.get(:lifting_excludes))
     liftable = find_liftable_aliases(requires ++ nondirectives, excluded)
 
-    if Enum.any?(liftable) do
+    global_exclude = Enum.any?(excluded, &(&1 === :"I really don't want alias lifting, fully disable it."))
+
+    if not global_exclude and Enum.any?(liftable) do
       # This is a silly hack that helps comments stay put.
       # The `cap_line` algo was designed to handle high-line stuff moving up into low line territory, so we set our
       # new node to have an arbitrarily high line annnnd comments behave! i think.
